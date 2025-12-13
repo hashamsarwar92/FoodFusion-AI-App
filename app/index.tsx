@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { Redirect } from "expo-router";
+import { View } from "react-native";
 
 export default function Index() {
   return (
@@ -9,11 +10,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text style={{
-        fontSize: 30,
-        fontFamily: 'outfit',
-      }}>My first Expo App.</Text>
-     
+      <Redirect href={'/Landing'} />
     </View>
   );
 }

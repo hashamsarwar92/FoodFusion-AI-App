@@ -18,3 +18,6 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    "outfit (regular and bold)" you can find the fonts in assets/fonts     
 6. in this project strapi is used as backend
    for media storage connect cloudinary with strapi and neon postgres db as well
+7. npm install react-native-reanimated
+8. npm i @animatereactnative/marquee
+   npm i react-native-gesture-handler required for marquee
