@@ -16,3 +16,5 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    and it will generate qr code. scan this qr using ur expo go app on your real device
 5. For this app i am using google Fonts 
    "outfit (regular and bold)" you can find the fonts in assets/fonts     
+6. in this project strapi is used as backend
+   for media storage connect cloudinary with strapi and neon postgres db as well

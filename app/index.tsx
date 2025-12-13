@@ -13,6 +13,7 @@ export default function Index() {
         fontSize: 30,
         fontFamily: 'outfit',
       }}>My first Expo App.</Text>
+     
     </View>
   );
 }
