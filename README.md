@@ -21,3 +21,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 7. npm install react-native-reanimated
 8. npm i @animatereactnative/marquee
    npm i react-native-gesture-handler required for marquee
+9. for authentication
+   npm i @logto/rn --f //forced install
+   npm i expo-crypto expo-secure-store expo-web-browser @react-native-async-storage/async-storage
+   npm install react-native-inappbrowser-reborn becuase logto doesnt work o androi down webview
+10. npm i axios --f
