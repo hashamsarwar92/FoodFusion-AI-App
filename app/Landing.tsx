@@ -1,9 +1,8 @@
 import Colors from "@/services/Colors";
-import GlobalApi from "@/services/GlobalApi";
 import { Marquee } from "@animatereactnative/marquee";
 import { useLogto } from '@logto/rn';
-import React, { useEffect } from "react";
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Landing() {
@@ -19,28 +18,28 @@ export default function Landing() {
     require("./../assets/images/6.jpg"),
   ];
   const { signIn, signOut, isAuthenticated, getIdTokenClaims } = useLogto();
-  useEffect(() => {
-      console.log("isAuthenticated:", isAuthenticated);
-      if (isAuthenticated) {
-        getIdTokenClaims().then(async(userData) => {
-          console.log("User Data:", userData);
-          if(userData?.email){
-            const result = await GlobalApi.GetUserByEmail(userData.email as string);
-            console.log("API Result:", result.data.data);
+  // useEffect(() => {
+  //     console.log("isAuthenticated:", isAuthenticated);
+  //     if (isAuthenticated) {
+  //       getIdTokenClaims().then(async(userData) => {
+  //         console.log("User Data:", userData);
+  //         if(userData?.email){
+  //           const result = await GlobalApi.GetUserByEmail(userData.email as string);
+  //           console.log("API Result:", result.data.data);
   
-            const data = {
-              email: userData.email,
-              name: userData.name || "",
-              picture: userData.picture || "" 
-            }
+  //           const data = {
+  //             email: userData.email,
+  //             name: userData.name || "",
+  //             picture: userData.picture || "" 
+  //           }
   
-            const resp = await GlobalApi.CreateNewUser(data);
-            console.log("User Creation Response:", resp.data);
-          }
-        });
+  //           const resp = await GlobalApi.CreateNewUser(data);
+  //           console.log("User Creation Response:", resp.data);
+  //         }
+  //       });
   
-      }
-    }, [isAuthenticated]);
+  //     }
+  //   }, [isAuthenticated]);
   return (
     <GestureHandlerRootView>
       <View>
@@ -127,7 +126,7 @@ export default function Landing() {
             Get Started
           </Text>
         </TouchableOpacity>
-         <Button title="Sign out" onPress={async () => {console.log("Sign out pressed"); signOut();}} />
+         {/* <Button title="Sign out" onPress={async () => {console.log("Sign out pressed"); signOut();}} /> */}
       </View>
     </GestureHandlerRootView>
   );

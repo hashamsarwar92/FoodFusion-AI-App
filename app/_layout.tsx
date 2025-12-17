@@ -1,6 +1,8 @@
+import { UserContext } from "@/context/UserContext";
 import { LogtoConfig, LogtoProvider, UserScope } from "@logto/rn";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { useState } from "react";
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -13,11 +15,15 @@ export default function RootLayout() {
     appId: "80ipwxky1v7qhrwcv7xla",
     scopes: [UserScope.Email],
   };
+
+  const [user, setUser] = useState([]);
   return (
     <LogtoProvider config={config}>
-      <Stack>
+      <UserContext.Provider value={{user, setUser}}>
+        <Stack>
         <Stack.Screen name="Landing" options={{ headerShown: false }} />
       </Stack>
+      </UserContext.Provider>
     </LogtoProvider>
   );
 }

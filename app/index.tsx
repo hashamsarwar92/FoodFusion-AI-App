@@ -1,32 +1,43 @@
+import { UserContext } from "@/context/UserContext";
 import GlobalApi from "@/services/GlobalApi";
 import { useLogto } from "@logto/rn";
-import { Redirect } from "expo-router";
-import { useEffect } from "react";
+import { useRouter } from "expo-router";
+import { useContext, useEffect } from "react";
 import { View } from "react-native";
 
 export default function Index() {
   const { getIdTokenClaims, isAuthenticated } = useLogto();
+  const { user, setUser } = useContext(UserContext);
 
-   useEffect(() => {
+  const router = useRouter();
+  useEffect(() => {
     console.log("isAuthenticated:", isAuthenticated);
     if (isAuthenticated) {
-      getIdTokenClaims().then(async(userData) => {
+      getIdTokenClaims().then(async (userData) => {
         console.log("User Data:", userData);
-        if(userData?.email){
-          const result = await GlobalApi.GetUserByEmail(userData.email as string);
+        if (userData?.email) {
+          const result = await GlobalApi.GetUserByEmail(
+            userData.email as string
+          );
           console.log("API Result:", result.data.data);
 
-          const data = {
-            email: userData.email,
-            name: userData.name || "",
-            picture: userData.picture || "" 
-          }
+          if (!result.data.data) {
+            const data = {
+              email: userData.email,
+              name: userData.name || "",
+              picture: userData.picture || "",
+            };
 
-          const resp = await GlobalApi.CreateNewUser(data);
-          console.log("User Creation Response:", resp.data);
+            const resp = await GlobalApi.CreateNewUser(data);
+            console.log("User Creation Response:", resp.data);
+            setUser(resp.data.data);
+            router.replace("/Landing");
+          } else {
+            setUser(result?.data?.data[0]);
+            router.replace("/Landing");
+          }
         }
       });
-
     }
   }, [isAuthenticated]);
   return (
@@ -37,7 +48,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Redirect href={'/Landing'} />
+      {/* <Redirect href={'/Landing'} /> */}
     </View>
   );
 }
