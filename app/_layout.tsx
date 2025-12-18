@@ -22,7 +22,9 @@ export default function RootLayout() {
       <UserContext.Provider value={{user, setUser}}>
         <Stack>
         <Stack.Screen name="Landing" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
+     
       </UserContext.Provider>
     </LogtoProvider>
   );
