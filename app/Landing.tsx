@@ -2,7 +2,7 @@ import Colors from "@/services/Colors";
 import { Marquee } from "@animatereactnative/marquee";
 import { useLogto } from '@logto/rn';
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Landing() {
@@ -126,7 +126,7 @@ export default function Landing() {
             Get Started
           </Text>
         </TouchableOpacity>
-         {/* <Button title="Sign out" onPress={async () => {console.log("Sign out pressed"); signOut();}} /> */}
+         <Button title="Sign out" onPress={async () => {console.log("Sign out pressed"); signOut();}} />
       </View>
     </GestureHandlerRootView>
   );

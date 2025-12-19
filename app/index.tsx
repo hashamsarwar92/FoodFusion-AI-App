@@ -21,7 +21,7 @@ export default function Index() {
           );
           console.log("API Result:", result.data.data);
 
-          if (!result.data.data) {
+          if (!result.data.data || result.data.data.length === 0) {
             const data = {
               email: userData.email,
               name: userData.name || "",

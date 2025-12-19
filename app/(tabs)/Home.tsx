@@ -1,10 +1,18 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import IntroHeader from "@/components/IntroHeader";
+import Colors from "@/services/Colors";
+import React from "react";
+import { View } from "react-native";
 
 export default function Home() {
   return (
-    <View>
-      <Text>Home</Text>
+    <View
+      style={{
+        height: "100%",
+        backgroundColor: Colors.WHITE,
+        padding: 20,
+      }}
+    >
+      <IntroHeader/>
     </View>
-  )
+  );
 }
