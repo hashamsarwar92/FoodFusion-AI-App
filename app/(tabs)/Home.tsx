@@ -1,3 +1,4 @@
+import CategoryList from "@/components/CategoryList";
 import CreateRecipe from "@/components/CreateRecipe";
 import IntroHeader from "@/components/IntroHeader";
 import Colors from "@/services/Colors";
@@ -15,6 +16,7 @@ export default function Home() {
     >
       <IntroHeader/>
       <CreateRecipe/>
+      <CategoryList/>
     </ScrollView>
   );
 }
