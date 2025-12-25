@@ -1,10 +1,22 @@
 import Colors from "@/services/Colors";
+import GlobalApi from "@/services/GlobalApi";
+import GENERATE_RECEPI_OPTION_PROMPT from "@/services/Prompt";
 import React from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import Button from "./Button";
 
 export default function CreateRecipe() {
     const [userInput, setUserInput] = React.useState<string>("");
+    const OnGenerate = async() => {
+      console.log("Generate Recepi Button clicked");
+      if(!userInput){
+        Alert.alert("Please enter details");
+        return;
+      }
+      console.log("User Input: ", userInput);
+      const result = await GlobalApi.AiModel(userInput+GENERATE_RECEPI_OPTION_PROMPT)
+      console.log("Recipe Options: ", result?.choices[0].message);
+    };
   return (
     <View style={styles.container}>
       <Image
@@ -22,7 +34,7 @@ export default function CreateRecipe() {
         placeholder="What you want to create? Add ingredients etc"
       />
       <Button label="Generate Recipe"
-      icon={"sparkles"} onPress={() => {console.log("Generate Recipe pressed")}} />
+      icon={"sparkles"} onPress={() => OnGenerate()} />
     </View>
   );
 }

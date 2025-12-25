@@ -26,3 +26,4 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm i expo-crypto expo-secure-store expo-web-browser @react-native-async-storage/async-storage
    npm install react-native-inappbrowser-reborn becuase logto doesnt work o androi down webview
 10. npm i axios --f
+11. npm i openai --f
