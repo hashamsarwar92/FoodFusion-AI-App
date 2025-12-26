@@ -1,9 +1,9 @@
 import Colors from "@/services/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 
-export default function Button({ label, onPress, icon='' }: any) {
+export default function Button({ label, onPress, icon='', loading=false }: any) {
   return (
     <TouchableOpacity
       style={{
@@ -20,7 +20,8 @@ export default function Button({ label, onPress, icon='' }: any) {
       }}
       onPress={onPress}
     >
-      <Ionicons name={icon} size={24} color={Colors.WHITE} />
+      {loading ? <ActivityIndicator color={Colors.WHITE}/> :<Ionicons name={icon} size={24} color={Colors.WHITE} />}
+      
       <Text
         style={{
           textAlign: "center",

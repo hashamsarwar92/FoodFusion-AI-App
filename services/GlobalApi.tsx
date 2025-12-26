@@ -26,6 +26,7 @@ const AiModel = async (prompt: string) => await openai.chat.completions.create({
         content: prompt,
       },
     ],
+    response_format: {type: 'json_object'},
   });
 export default {
     GetUserByEmail,

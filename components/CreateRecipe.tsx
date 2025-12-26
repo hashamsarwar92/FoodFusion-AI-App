@@ -7,6 +7,8 @@ import Button from "./Button";
 
 export default function CreateRecipe() {
     const [userInput, setUserInput] = React.useState<string>("");
+    const [recipeOptions, setRecipeOptions] = React.useState();
+    const [loading, setLoading] = React.useState<boolean>(false);
     const OnGenerate = async() => {
       console.log("Generate Recepi Button clicked");
       if(!userInput){
@@ -14,8 +16,10 @@ export default function CreateRecipe() {
         return;
       }
       console.log("User Input: ", userInput);
+      setLoading(true);
       const result = await GlobalApi.AiModel(userInput+GENERATE_RECEPI_OPTION_PROMPT)
       console.log("Recipe Options: ", result?.choices[0].message);
+      setLoading(false);
     };
   return (
     <View style={styles.container}>
@@ -33,7 +37,7 @@ export default function CreateRecipe() {
         placeholderTextColor={Colors.GRAY} 
         placeholder="What you want to create? Add ingredients etc"
       />
-      <Button label="Generate Recipe"
+      <Button label="Generate Recipe" loading={loading}
       icon={"sparkles"} onPress={() => OnGenerate()} />
     </View>
   );
