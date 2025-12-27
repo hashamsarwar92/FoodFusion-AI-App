@@ -6,6 +6,7 @@ import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 export default function Button({ label, onPress, icon='', loading=false }: any) {
   return (
     <TouchableOpacity
+    disabled={loading}
       style={{
         backgroundColor: Colors.PRIMARY,
         padding: 15,
