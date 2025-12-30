@@ -1,6 +1,5 @@
 import Colors from "@/services/Colors";
 import GlobalApi from "@/services/GlobalApi";
-import GENERATE_RECEPI_OPTION_PROMPT from "@/services/Prompt";
 import React, { useRef } from "react";
 import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
@@ -19,10 +18,26 @@ export default function CreateRecipe() {
       }
       console.log("User Input: ", userInput);
       setLoading(true);
-      const result = await GlobalApi.AiModel(userInput+GENERATE_RECEPI_OPTION_PROMPT)
-      const content = result?.choices[0].message?.content;
-      console.log("Recipe Options: ", result?.choices[0].message);
-      content && setRecipeOptions(JSON.parse(content));
+      const result = await GlobalApi.AiModelGemini(userInput)
+       if (!result.candidates || result.candidates.length === 0) {
+    return "No content returned by the model.";
+  }
+  if (!result.candidates[0].content || !result.candidates[0].content.parts) {
+    return "No content parts returned by the model.";
+  }
+  
+      console.log("AI Model Result: ", result.candidates[0].content?.parts[0].text);
+    //   const textParts = result?.candidates?.content
+    // .map((c: any) => c.text)
+    // .join('');
+      // const content = result?.choices[0].message?.content;
+      // console.log("Recipe Options: ", result?.choices[0].message);
+      if(!result.candidates[0].content?.parts[0].text){
+        Alert.alert("Failed to generate recipe. Please try again.");
+        setLoading(false);
+        return;
+      }
+      setRecipeOptions(JSON.parse(result.candidates[0].content?.parts[0].text));
      
       setLoading(false);
        actionSheetRef.current?.show();
