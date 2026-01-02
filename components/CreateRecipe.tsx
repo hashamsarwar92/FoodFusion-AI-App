@@ -1,14 +1,16 @@
 import Colors from "@/services/Colors";
 import GlobalApi from "@/services/GlobalApi";
 import React, { useRef } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Button from "./Button";
+import LoadingDialog from "./LoadingDialog";
 
 export default function CreateRecipe() {
     const [userInput, setUserInput] = React.useState<string>("");
     const [recipeOptions, setRecipeOptions] = React.useState<any>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [openLoading, setOpenLoading] = React.useState<boolean>(false);
     const actionSheetRef = useRef<ActionSheetRef>(null);
     const OnGenerate = async() => {
       console.log("Generate Recepi Button clicked");
@@ -42,6 +44,10 @@ export default function CreateRecipe() {
       setLoading(false);
        actionSheetRef.current?.show();
     };
+
+    const GenerateCompleteRecipe = ()=>{
+
+    }
   return (
     <View style={styles.container}>
       <Image
@@ -60,13 +66,16 @@ export default function CreateRecipe() {
       />
       <Button label="Generate Recipe" loading={loading}
       icon={"sparkles"} onPress={() => OnGenerate()} />
+      <LoadingDialog visible={openLoading} />
       <ActionSheet gestureEnabled ref={actionSheetRef}>
       <View style={styles.actionSheetContainer}>
         <Text style={styles.heading}>Select Recipe</Text>
         <View>
           {
             recipeOptions?.map((item: any, index: any)=>(
-              <View key={index} style={styles.recipeOptionContainer}>
+              <TouchableOpacity
+              onPress={()=>GenerateCompleteRecipe()}
+              key={index} style={styles.recipeOptionContainer}>
                 <Text style={{
                   fontFamily: "outfit-bold",
                   fontSize: 16,
@@ -75,7 +84,7 @@ export default function CreateRecipe() {
                   fontFamily: "outfit",
                   color: Colors.GRAY,
                 }}>{item?.description}</Text>
-              </View>
+              </TouchableOpacity>
             ))
           }
         </View>
