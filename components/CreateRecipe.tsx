@@ -1,95 +1,188 @@
 import Colors from "@/services/Colors";
 import GlobalApi from "@/services/GlobalApi";
+import Prompt from "@/services/Prompt";
 import React, { useRef } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Button from "./Button";
 import LoadingDialog from "./LoadingDialog";
 
 export default function CreateRecipe() {
-    const [userInput, setUserInput] = React.useState<string>("");
-    const [recipeOptions, setRecipeOptions] = React.useState<any>([]);
-    const [loading, setLoading] = React.useState<boolean>(false);
-    const [openLoading, setOpenLoading] = React.useState<boolean>(false);
-    const actionSheetRef = useRef<ActionSheetRef>(null);
-    const OnGenerate = async() => {
-      console.log("Generate Recepi Button clicked");
-      if(!userInput){
-        Alert.alert("Please enter details");
-        return;
-      }
-      console.log("User Input: ", userInput);
-      setLoading(true);
-      const result = await GlobalApi.AiModelGemini(userInput)
-       if (!result.candidates || result.candidates.length === 0) {
-    return "No content returned by the model.";
-  }
-  if (!result.candidates[0].content || !result.candidates[0].content.parts) {
-    return "No content parts returned by the model.";
-  }
-  
-      console.log("AI Model Result: ", result.candidates[0].content?.parts[0].text);
+  const [userInput, setUserInput] = React.useState<string>("");
+  const [recipeOptions, setRecipeOptions] = React.useState<any>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [openLoading, setOpenLoading] = React.useState<boolean>(false);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+  const OnGenerate = async () => {
+    console.log("Generate Recepi Button clicked");
+    if (!userInput) {
+      Alert.alert("Please enter details");
+      return;
+    }
+    console.log("User Input: ", userInput);
+    setLoading(true);
+    const result = await GlobalApi.AiModelGemini(`
+Based on the user instruction, create exactly 3 different recipe variants.
+
+Requirements:
+1. Each recipe must have:
+   - "recipeName": include an emoji
+   - "description": 2-line description
+   - "ingredients": main ingredient list (no quantities or sizes)
+2. Return the output **only in JSON format** with these fields: recipeName, description, ingredients
+3. Do not include any extra text outside JSON
+4. Use creative recipe names and descriptions
+
+User Instruction: "${userInput}"
+          `);
+    if (!result.candidates || result.candidates.length === 0) {
+      return "No content returned by the model.";
+    }
+    if (!result.candidates[0].content || !result.candidates[0].content.parts) {
+      return "No content parts returned by the model.";
+    }
+
+    console.log(
+      "AI Model Result: ",
+      result.candidates[0].content?.parts[0].text
+    );
     //   const textParts = result?.candidates?.content
     // .map((c: any) => c.text)
     // .join('');
-      // const content = result?.choices[0].message?.content;
-      // console.log("Recipe Options: ", result?.choices[0].message);
-      if(!result.candidates[0].content?.parts[0].text){
-        Alert.alert("Failed to generate recipe. Please try again.");
-        setLoading(false);
-        return;
-      }
-      setRecipeOptions(JSON.parse(result.candidates[0].content?.parts[0].text));
-     
+    // const content = result?.choices[0].message?.content;
+    // console.log("Recipe Options: ", result?.choices[0].message);
+    if (!result.candidates[0].content?.parts[0].text) {
+      Alert.alert("Failed to generate recipe. Please try again.");
       setLoading(false);
-       actionSheetRef.current?.show();
+      return;
+    }
+    setRecipeOptions(JSON.parse(result.candidates[0].content?.parts[0].text));
+
+    setLoading(false);
+    actionSheetRef.current?.show();
+  };
+
+  const GenerateCompleteRecipe = async (option: any) => {
+    setOpenLoading(true);
+
+    actionSheetRef.current?.hide();
+
+    const PROMPT = `RecipeName: ${option?.recipeName} Description: ${option?.description} ${Prompt.GENERATE_COMPLETE_RECIPE}`;
+    const result = await GlobalApi.AiModelGemini(PROMPT);
+    if (!result.candidates || result.candidates.length === 0) {
+      return "No content returned by the model.";
+    }
+    if (!result.candidates[0].content || !result.candidates[0].content.parts) {
+      return "No content parts returned by the model.";
+    }
+
+    console.log(
+      "AI Model Result: ",
+      result.candidates[0].content?.parts[0].text
+    );
+    const imageUrl = "#";
+    const insertedRecordResult = await SaveToDb(
+      result.candidates[0].content?.parts[0].text,
+      imageUrl
+    );
+    setOpenLoading(false);
+  };
+
+  const SaveToDb = async (content: any, imageUrl: string) => {
+    // Parse content if it's a string
+    let parsedContent: any = content;
+    if (typeof content === "string") {
+      try {
+        parsedContent = JSON.parse(content);
+      } catch (err) {
+        console.error("Failed to parse content JSON:", err);
+        parsedContent = {};
+      }
+    }
+
+    // Prepare data for Strapi
+    const data = {
+      recipeImage: imageUrl, // use the variable, not string
+      recipeName: parsedContent.recipeName || "",
+      description: parsedContent.description || "",
+      ingredients: parsedContent.ingredients || [],
+      steps: parsedContent.steps || [],
+      calories: parsedContent.calories || 0,
+      cookTime: parsedContent.cookTime || 0,
+      serveTo: parsedContent.serveTo || 1,
+      imagePrompt: parsedContent.imagePrompt || "",
+      userEmail: 'testingapps0092@gmail.com'
     };
 
-    const GenerateCompleteRecipe = ()=>{
+    console.log("Saving to DB:", data); // 🔥 debug
 
-    }
+    const result = await GlobalApi.CreateNewRecipe(data);
+    return result.data.data;
+  };
   return (
     <View style={styles.container}>
       <Image
         source={require("./../assets/images/pan.gif")}
         style={styles.panImage}
       />
+      <Text>{openLoading ? "Loading..." : ""}</Text>
       <Text style={styles.heading}>Warm up your stove and let get cooking</Text>
       <Text style={styles.subHeading}>Make something for you</Text>
       <TextInput
         multiline={true}
-        onChangeText={(value)=>setUserInput(value)}
+        onChangeText={(value) => setUserInput(value)}
         numberOfLines={3}
         style={styles.textInput}
-        placeholderTextColor={Colors.GRAY} 
+        placeholderTextColor={Colors.GRAY}
         placeholder="What you want to create? Add ingredients etc"
       />
-      <Button label="Generate Recipe" loading={loading}
-      icon={"sparkles"} onPress={() => OnGenerate()} />
-      <LoadingDialog visible={openLoading} />
+      <Button
+        label="Generate Recipe"
+        loading={loading}
+        icon={"sparkles"}
+        onPress={() => OnGenerate()}
+      />
+      <Text>{openLoading ? "Loading..." : "hiii"}</Text>
+      <LoadingDialog visible1={openLoading} />
       <ActionSheet gestureEnabled ref={actionSheetRef}>
-      <View style={styles.actionSheetContainer}>
-        <Text style={styles.heading}>Select Recipe</Text>
-        <View>
-          {
-            recipeOptions?.map((item: any, index: any)=>(
+        <View style={styles.actionSheetContainer}>
+          <Text style={styles.heading}>Select Recipe</Text>
+          <View>
+            {recipeOptions?.map((item: any, index: any) => (
               <TouchableOpacity
-              onPress={()=>GenerateCompleteRecipe()}
-              key={index} style={styles.recipeOptionContainer}>
-                <Text style={{
-                  fontFamily: "outfit-bold",
-                  fontSize: 16,
-                }}>{item?.recipeName}</Text>
-                <Text style={{
-                  fontFamily: "outfit",
-                  color: Colors.GRAY,
-                }}>{item?.description}</Text>
+                onPress={() => GenerateCompleteRecipe(item)}
+                key={index}
+                style={styles.recipeOptionContainer}
+              >
+                <Text
+                  style={{
+                    fontFamily: "outfit-bold",
+                    fontSize: 16,
+                  }}
+                >
+                  {item?.recipeName}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "outfit",
+                    color: Colors.GRAY,
+                  }}
+                >
+                  {item?.description}
+                </Text>
               </TouchableOpacity>
-            ))
-          }
+            ))}
+          </View>
         </View>
-      </View>
-    </ActionSheet>
+      </ActionSheet>
     </View>
   );
 }

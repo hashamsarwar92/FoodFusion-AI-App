@@ -3,11 +3,11 @@ import React from "react";
 import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
 
 export default function LoadingDialog({
-  visible = false,
+  visible1 = false,
   text = "Loading...",
 }: any) {
   return (
-    <Modal transparent visible={visible}>
+    <Modal transparent visible={visible1}>
       <View style={styles.overlay}>
         <View
           style={{
