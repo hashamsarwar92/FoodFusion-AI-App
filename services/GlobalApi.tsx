@@ -48,6 +48,10 @@ const GetUserByEmail = (email:string) => axiosClient.get('/user-lists?filters[em
 const CreateNewUser = (data:object) => axiosClient.post('/user-lists', {data:data});
 const GetCategories = () => axiosClient.get('/categories?populate=*');
 const CreateNewRecipe = (data: any)=> axiosClient.post('/recipes', {data:data});
+const UpdateUser = (uid:any, data:any)=> axiosClient.put('/user-lists/'+uid, {data:data});
+
+
+
 const AiModelGemini = async (prompt: string) => { 
   const contents = [
     {
@@ -83,4 +87,5 @@ export default {
     AiModel,
     AiModelGemini,
     CreateNewRecipe,
+    UpdateUser,
 }

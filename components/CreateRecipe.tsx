@@ -1,6 +1,7 @@
+import { UserContext } from "@/context/UserContext";
 import Colors from "@/services/Colors";
 import GlobalApi from "@/services/GlobalApi";
-import React, { useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   Alert,
   Image,
@@ -20,6 +21,10 @@ export default function CreateRecipe() {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [openLoading, setOpenLoading] = React.useState<boolean>(false);
   const actionSheetRef = useRef<ActionSheetRef>(null);
+  const {user, setUser} = useContext(UserContext);
+  useEffect(() => {
+    console.log("User Context in CreateRecipe: ", user);
+  }, [user]);
   const OnGenerate = async () => {
     console.log("Generate Recepi Button clicked");
     if (!userInput) {
@@ -236,12 +241,15 @@ export default function CreateRecipe() {
       cookTime: parsedContent.cookTime || 0,
       serveTo: parsedContent.serveTo || 1,
       imagePrompt: parsedContent.imagePrompt || "",
-      userEmail: "testingapps0092@gmail.com",
+      userEmail: user?.email || "unknown@unknown.com",
     };
 
     console.log("Saving to DB:", data); // 🔥 debug
 
     const result = await GlobalApi.CreateNewRecipe(data);
+    const updateUser = await GlobalApi.UpdateUser(user?.documentId, {name: user?.name, email: user?.email, picture: user?.picture, pref: null, credits:  user?.credits -1});
+    console.log("Update User Result: ", updateUser);
+    // setUser({...user, credits:  user?.credits -1});
     return result.data.data;
   };
   return (
