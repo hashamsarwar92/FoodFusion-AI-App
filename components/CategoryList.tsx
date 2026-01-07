@@ -1,10 +1,12 @@
 import GlobalApi from "@/services/GlobalApi";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CategoryList() {
   const [categoryList, setCategoryList] = React.useState([]);
   useEffect(() => {GetCategoryList()}, []);
+  const router = useRouter();
 
   const GetCategoryList = async () => {
     const result = await GlobalApi.GetCategories();
@@ -18,7 +20,12 @@ export default function CategoryList() {
         scrollEnabled={false}
         data={categoryList}
         renderItem={({ item, index }: any) => (
-          <View style={styles.categoryContainer}>
+          <TouchableOpacity 
+          onPress={()=>router.push({
+            pathname: '/recipe-by-category',
+            params: { categoryName: item?.name },
+          })} 
+          style={styles.categoryContainer}>
             <Image
               source={{ uri: item?.image?.url }}
               style={{ width: 40, height: 40 }}
@@ -26,7 +33,7 @@ export default function CategoryList() {
             <Text style={{ fontFamily: "outfit", marginTop: 3 }}>
               {item.name}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
