@@ -49,7 +49,9 @@ const CreateNewUser = (data:object) => axiosClient.post('/user-lists', {data:dat
 const GetCategories = () => axiosClient.get('/categories?populate=*');
 const CreateNewRecipe = (data: any)=> axiosClient.post('/recipes', {data:data});
 const UpdateUser = (uid:any, data:any)=> axiosClient.put('/user-lists/'+uid, {data:data});
-
+const GetRecipeByCategory = (category: string) => axiosClient.get(
+    `/recipes?filters[category][name][$containsi]=${encodeURIComponent(category)}&populate=*`
+  );
 
 
 const AiModelGemini = async (prompt: string) => { 
@@ -88,4 +90,5 @@ export default {
     AiModelGemini,
     CreateNewRecipe,
     UpdateUser,
+    GetRecipeByCategory,
 }
